@@ -23,7 +23,9 @@ group = 'com.problemfighter.pfspring.identity'
 version = '1.0.0'
 
 
-def dependencyList = []
+def dependencyList = [
+        "pfspring-jwt"
+]
 
 dependencies {
     dependencyList.each {
@@ -31,6 +33,9 @@ dependencies {
             implementation project(":" + it)
         }
     }
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
 }
 
 bootJar { enabled = false }
