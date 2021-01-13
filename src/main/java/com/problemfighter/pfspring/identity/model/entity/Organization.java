@@ -16,6 +16,8 @@ public class Organization extends EntityCommon {
 
     public String logoUrl;
     public String type;  // CRM, POS
+    public String appURL;
+    public String appKey;
 
     @ManyToMany(mappedBy = "organizations")
     @JoinTable

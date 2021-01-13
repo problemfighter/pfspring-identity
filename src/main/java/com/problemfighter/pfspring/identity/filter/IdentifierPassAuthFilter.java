@@ -2,13 +2,16 @@ package com.problemfighter.pfspring.identity.filter;
 
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
+import com.problemfighter.pfspring.identity.model.entity.Identity;
 import com.problemfighter.pfspring.identity.processor.JsonObjectProcessor;
+import com.problemfighter.pfspring.identity.service.IdentityService;
 import com.problemfighter.pfspring.restapi.common.ApiRestException;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -18,9 +21,11 @@ import java.io.IOException;
 public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
+    private final IdentityService identityService;
 
-    public IdentifierPassAuthFilter(AuthenticationManager authenticationManager) {
+    public IdentifierPassAuthFilter(AuthenticationManager authenticationManager, IdentityService identityService) {
         this.authenticationManager = authenticationManager;
+        this.identityService = identityService;
     }
 
     @Override
@@ -30,6 +35,11 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
             if (loginData == null) {
                 ApiRestException.error(IdentityMessages.UNABLE_TO_PARSE);
             }
+            Identity identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
+            if (identity == null) {
+                ApiRestException.error(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);
+            }
+
             Authentication authentication = new UsernamePasswordAuthenticationToken(
                     loginData.identifier,
                     loginData.password
