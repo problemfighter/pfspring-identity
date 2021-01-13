@@ -1,11 +1,13 @@
 package com.problemfighter.pfspring.identity.filter;
 
+import com.problemfighter.pfspring.identity.common.IdentityUtil;
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
 import com.problemfighter.pfspring.identity.model.entity.Identity;
 import com.problemfighter.pfspring.identity.processor.JsonObjectProcessor;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import com.problemfighter.pfspring.restapi.common.ApiRestException;
+import com.problemfighter.pfspring.restapi.rr.RequestResponse;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -18,7 +20,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
-public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilter {
+public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilter implements RequestResponse {
 
     private final AuthenticationManager authenticationManager;
     private final IdentityService identityService;
@@ -54,10 +56,11 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
         super.successfulAuthentication(request, response, chain, authResult);
+
     }
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        super.unsuccessfulAuthentication(request, response, failed);
+        IdentityUtil.makeJsonResponse(response, responseProcessor().error(failed.getMessage()));
     }
 }
