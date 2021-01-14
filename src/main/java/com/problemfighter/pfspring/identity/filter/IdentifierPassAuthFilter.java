@@ -24,6 +24,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
 
     private final AuthenticationManager authenticationManager;
     private final IdentityService identityService;
+    private Identity identity;
 
     public IdentifierPassAuthFilter(AuthenticationManager authenticationManager, IdentityService identityService) {
         this.authenticationManager = authenticationManager;
@@ -37,7 +38,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
             if (loginData == null) {
                 ApiRestException.error(IdentityMessages.UNABLE_TO_PARSE);
             }
-            Identity identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
+            identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
             if (identity == null) {
                 ApiRestException.error(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);
             }
@@ -55,8 +56,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        super.successfulAuthentication(request, response, chain, authResult);
-
+        IdentityUtil.makeJsonResponse(response, identityService.successAuthResponse(identity));
     }
 
     @Override

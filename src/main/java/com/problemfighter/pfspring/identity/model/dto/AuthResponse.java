@@ -9,6 +9,11 @@ public class AuthResponse implements IAuthResponse {
         return this.login;
     }
 
+    @Override
+    public void setLogin(TokenDTO tokenDTO) {
+        this.login = tokenDTO;
+    }
+
     public AuthResponse setToken(String accessToken, String refreshToken) {
         login = new TokenDTO();
         login.accessToken = accessToken;
