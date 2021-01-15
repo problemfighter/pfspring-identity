@@ -19,7 +19,7 @@ public class Organization extends EntityCommon {
     public String appURL;
     public String appKey;
 
-    @ManyToMany(mappedBy = "organizations")
+    @ManyToMany
     @JoinTable
     public Set<Identity> identities = new HashSet<>();
 

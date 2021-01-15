@@ -1,5 +1,6 @@
 package com.problemfighter.pfspring.identity.filter;
 
+import com.problemfighter.pfspring.identity.common.AuthException;
 import com.problemfighter.pfspring.identity.common.IdentityUtil;
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
@@ -36,11 +37,12 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
         try {
             LoginDTO loginData = JsonObjectProcessor.instance().getLoginDetails(request.getInputStream());
             if (loginData == null) {
-                ApiRestException.error(IdentityMessages.UNABLE_TO_PARSE);
+                throw new ApiRestException().errorException(IdentityMessages.UNABLE_TO_PARSE);
             }
+
             identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
             if (identity == null) {
-                ApiRestException.error(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);
+                throw new ApiRestException().errorException(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);
             }
 
             Authentication authentication = new UsernamePasswordAuthenticationToken(
@@ -48,9 +50,13 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
                     loginData.password
             );
             return authenticationManager.authenticate(authentication);
-        } catch (IOException e) {
-            ApiRestException.error(e.getMessage());
-            throw new RuntimeException(e);
+        } catch (Exception e) {
+            if (e instanceof ApiRestException) {
+                Object error = ((ApiRestException) e).getError();
+                throw new AuthException(e.getMessage(), error);
+            } else {
+                throw new AuthException(e.getMessage());
+            }
         }
     }
 
@@ -61,6 +67,11 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
 
     @Override
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
-        IdentityUtil.makeJsonResponse(response, responseProcessor().error(failed.getMessage()));
+        if (failed instanceof AuthException) {
+            Object error = ((AuthException) failed).getError();
+            IdentityUtil.makeJsonResponse(response, error);
+        } else {
+            IdentityUtil.makeJsonResponse(response, responseProcessor().error(failed.getMessage()));
+        }
     }
 }
