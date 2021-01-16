@@ -33,10 +33,12 @@ public class IdentityService implements RequestResponse {
 
 
     public DetailsResponse<IAuthResponse> successAuthResponse(Identity identity) {
-        IAuthResponse iAuthResponse = identityCallbackService.beforeAuthResponse(jwtService.getJwtProcessor(), identity);
+        IAuthResponse iAuthResponse = identityCallbackService.beforeAuthResponse(jwtService, identity);
         DetailsResponse<IAuthResponse> response = new DetailsResponse<>();
         if (iAuthResponse == null) {
-            iAuthResponse = new AuthResponse().setToken(jwtService.getToken(identity.uuid), null);
+            String accessToken = jwtService.setIssuer(identity.uuid).getAccessToken();
+            String refreshToken = jwtService.setIssuer(identity.uuid).getRefreshToken();
+            iAuthResponse = new AuthResponse().setToken(accessToken, refreshToken);
         }
         response.data = iAuthResponse;
         response.success();
@@ -52,7 +54,7 @@ public class IdentityService implements RequestResponse {
         return identity;
     }
 
-    public Long getIdentityCount(){
+    public Long getIdentityCount() {
         return identityRepository.count();
     }
 
