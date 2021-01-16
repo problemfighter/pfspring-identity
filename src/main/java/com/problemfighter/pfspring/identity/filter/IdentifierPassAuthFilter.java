@@ -39,7 +39,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
             if (loginData == null) {
                 throw new ApiRestException().errorException(IdentityMessages.UNABLE_TO_PARSE);
             }
-
+            requestProcessor().dataValidate(loginData);
             identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
             if (identity == null) {
                 throw new ApiRestException().errorException(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);

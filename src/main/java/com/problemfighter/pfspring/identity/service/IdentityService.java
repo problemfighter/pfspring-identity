@@ -1,14 +1,19 @@
 package com.problemfighter.pfspring.identity.service;
 
 
+import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.config.PasswordConfig;
 import com.problemfighter.pfspring.identity.model.dto.AuthResponse;
 import com.problemfighter.pfspring.identity.model.dto.IAuthResponse;
+import com.problemfighter.pfspring.identity.model.dto.RenewDTO;
 import com.problemfighter.pfspring.identity.model.dto.identity.IdentityMasterDTO;
 import com.problemfighter.pfspring.identity.model.entity.Identity;
 import com.problemfighter.pfspring.identity.repository.IdentityRepository;
+import com.problemfighter.pfspring.jwt.model.data.JwtValidationResponse;
 import com.problemfighter.pfspring.jwt.service.JwtService;
+import com.problemfighter.pfspring.restapi.common.ApiRestException;
 import com.problemfighter.pfspring.restapi.rr.RequestResponse;
+import com.problemfighter.pfspring.restapi.rr.request.RequestData;
 import com.problemfighter.pfspring.restapi.rr.response.DetailsResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,14 +36,30 @@ public class IdentityService implements RequestResponse {
         return identityRepository.getActiveIdentityByIdentifier(identifier);
     }
 
+    public DetailsResponse<IAuthResponse> renew(RequestData<RenewDTO> data) {
+        RenewDTO renewDTO = data.getData();
+        try {
+            if (renewDTO != null && requestProcessor().dataValidate(renewDTO)) {
+                JwtValidationResponse jwtValidationResponse = jwtService.validateRefreshToken(renewDTO.token);
+                Identity identity = identityRepository.getActiveIdentityByUUID(jwtValidationResponse.getIssuer());
+                if (identity == null) {
+                    throw new ApiRestException().errorException(IdentityMessages.UNABLE_TO_PROCESS_RENEW_REQUEST);
+                }
+                return successAuthResponse(identity);
+            }
+        } catch (Exception e) {
+            throw new ApiRestException().errorException(e.getMessage());
+        }
+        throw new ApiRestException().errorException(IdentityMessages.UNABLE_TO_PROCESS_RENEW_REQUEST);
+    }
+
 
     public DetailsResponse<IAuthResponse> successAuthResponse(Identity identity) {
+        jwtService.setIssuer(identity.uuid);
         IAuthResponse iAuthResponse = identityCallbackService.beforeAuthResponse(jwtService, identity);
         DetailsResponse<IAuthResponse> response = new DetailsResponse<>();
         if (iAuthResponse == null) {
-            String accessToken = jwtService.setIssuer(identity.uuid).getAccessToken();
-            String refreshToken = jwtService.setIssuer(identity.uuid).getRefreshToken();
-            iAuthResponse = new AuthResponse().setToken(accessToken, refreshToken);
+            iAuthResponse = new AuthResponse().setToken(jwtService.getAccessToken(), jwtService.getRefreshToken());
         }
         response.data = iAuthResponse;
         response.success();

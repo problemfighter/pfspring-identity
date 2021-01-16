@@ -16,6 +16,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     public final IdentityService identityService;
+    private final String loginUrl = "/api/v1/auth/login";
+    private final String renewUrl = "/api/v1/auth/renew";
 
     @Autowired
     public SecurityConfigurer(IdentityService identityService) {
@@ -33,7 +35,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .addFilter(new IdentifierPassAuthFilter(authenticationManager(), identityService))
                 .addFilterAfter(new JwtTokenFilter(), IdentifierPassAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/").permitAll()
+                .antMatchers("/", renewUrl).permitAll()
                 .anyRequest()
                 .authenticated();
     }
