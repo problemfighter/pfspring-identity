@@ -69,6 +69,9 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
     protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
         if (failed instanceof AuthException) {
             Object error = ((AuthException) failed).getError();
+            if (error == null) {
+                error = responseProcessor().error(failed.getMessage());
+            }
             IdentityUtil.makeJsonResponse(response, error);
         } else {
             IdentityUtil.makeJsonResponse(response, responseProcessor().error(failed.getMessage()));
