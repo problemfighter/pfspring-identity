@@ -1,8 +1,8 @@
 package com.problemfighter.pfspring.identity.config;
 
 
-import com.problemfighter.pfspring.identity.filter.IdentifierPassAuthFilter;
 import com.problemfighter.pfspring.identity.filter.JwtTokenFilter;
+import com.problemfighter.pfspring.identity.filter.IdentifierPassAuthFilter;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,12 +16,13 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     public final IdentityService identityService;
-    private final String loginUrl = "/api/v1/auth/login";
     private final String renewUrl = "/api/v1/auth/renew";
+    private final JwtTokenFilter jwtTokenFilter;
 
     @Autowired
-    public SecurityConfigurer(IdentityService identityService) {
+    public SecurityConfigurer(IdentityService identityService, JwtTokenFilter jwtTokenFilter) {
         this.identityService = identityService;
+        this.jwtTokenFilter = jwtTokenFilter;
     }
 
 
@@ -33,7 +34,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .addFilter(new IdentifierPassAuthFilter(authenticationManager(), identityService))
-                .addFilterAfter(new JwtTokenFilter(), IdentifierPassAuthFilter.class)
+                .addFilterAfter(jwtTokenFilter, IdentifierPassAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", renewUrl).permitAll()
                 .anyRequest()

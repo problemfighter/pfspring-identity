@@ -17,23 +17,20 @@ import com.problemfighter.pfspring.restapi.rr.RequestResponse;
 import com.problemfighter.pfspring.restapi.rr.ResponseProcessor;
 import com.problemfighter.pfspring.restapi.rr.request.RequestData;
 import com.problemfighter.pfspring.restapi.rr.response.DetailsResponse;
-import com.problemfighter.pfspring.restapi.rr.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ResourceBundle;
 
 @Service
 public class IdentityService implements RequestResponse {
 
     private final IdentityRepository identityRepository;
-    private final IdentityCallbackService identityCallbackService;
+    private final IIdentityCallbackService iIdentityCallbackService;
     private final JwtService jwtService;
 
     @Autowired
-    public IdentityService(IdentityRepository identityRepository, IdentityCallbackService identityCallbackService, JwtService jwtService) {
+    public IdentityService(IdentityRepository identityRepository, IIdentityCallbackService iIdentityCallbackService, JwtService jwtService) {
         this.identityRepository = identityRepository;
-        this.identityCallbackService = identityCallbackService;
+        this.iIdentityCallbackService = iIdentityCallbackService;
         this.jwtService = jwtService;
     }
 
@@ -63,7 +60,7 @@ public class IdentityService implements RequestResponse {
 
     public DetailsResponse<IAuthResponse> successAuthResponse(Identity identity) {
         jwtService.setIssuer(identity.uuid);
-        IAuthResponse iAuthResponse = identityCallbackService.beforeAuthResponse(jwtService, identity);
+        IAuthResponse iAuthResponse = iIdentityCallbackService.beforeAuthResponse(jwtService, identity);
         DetailsResponse<IAuthResponse> response = new DetailsResponse<>();
         if (iAuthResponse == null) {
             iAuthResponse = new AuthResponse().setToken(jwtService.getAccessToken(), jwtService.getRefreshToken());
