@@ -1,7 +1,7 @@
 package com.problemfighter.pfspring.identity.config;
 
 
-import com.problemfighter.pfspring.identity.filter.JwtTokenFilter;
+import com.problemfighter.pfspring.identity.filter.JwtTokenFilterInterface;
 import com.problemfighter.pfspring.identity.filter.IdentifierPassAuthFilter;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,10 +17,10 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
     public final IdentityService identityService;
     private final String renewUrl = "/api/v1/auth/renew";
-    private final JwtTokenFilter jwtTokenFilter;
+    private final JwtTokenFilterInterface jwtTokenFilter;
 
     @Autowired
-    public SecurityConfigurer(IdentityService identityService, JwtTokenFilter jwtTokenFilter) {
+    public SecurityConfigurer(IdentityService identityService, JwtTokenFilterInterface jwtTokenFilter) {
         this.identityService = identityService;
         this.jwtTokenFilter = jwtTokenFilter;
     }

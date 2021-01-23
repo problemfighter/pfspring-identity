@@ -1,5 +1,7 @@
 package com.problemfighter.pfspring.identity.config;
 
+import com.problemfighter.pfspring.identity.filter.JwtTokenFilter;
+import com.problemfighter.pfspring.identity.filter.JwtTokenFilterInterface;
 import com.problemfighter.pfspring.identity.service.IdentityCallbackInterface;
 import com.problemfighter.pfspring.identity.service.IdentityCallbackService;
 import org.springframework.context.annotation.Bean;
@@ -14,6 +16,12 @@ public class IdentityConfiguration {
     @Lazy
     public IdentityCallbackInterface identityCallbackInterface() {
         return new IdentityCallbackService();
+    }
+
+    @Bean
+    @Lazy
+    public JwtTokenFilterInterface jwtTokenFilterInterface(){
+        return new JwtTokenFilter();
     }
 
 }
