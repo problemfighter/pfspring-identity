@@ -1,6 +1,6 @@
 package com.problemfighter.pfspring.identity.controller;
 
-import com.problemfighter.pfspring.identity.model.dto.IAuthResponse;
+import com.problemfighter.pfspring.identity.model.dto.AuthResponseInterface;
 import com.problemfighter.pfspring.identity.model.dto.RenewDTO;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import com.problemfighter.pfspring.restapi.rr.request.RequestData;
@@ -23,7 +23,7 @@ public class ApiV1AuthController {
     }
 
     @RequestMapping(value = "/renew", method = RequestMethod.POST)
-    public DetailsResponse<IAuthResponse> renew(@RequestBody RequestData<RenewDTO> data) {
+    public DetailsResponse<AuthResponseInterface> renew(@RequestBody RequestData<RenewDTO> data) {
         return identityService.renew(data);
     }
 

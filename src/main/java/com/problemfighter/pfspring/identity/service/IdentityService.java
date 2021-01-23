@@ -4,7 +4,7 @@ package com.problemfighter.pfspring.identity.service;
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.config.PasswordConfig;
 import com.problemfighter.pfspring.identity.model.dto.AuthResponse;
-import com.problemfighter.pfspring.identity.model.dto.IAuthResponse;
+import com.problemfighter.pfspring.identity.model.dto.AuthResponseInterface;
 import com.problemfighter.pfspring.identity.model.dto.RenewDTO;
 import com.problemfighter.pfspring.identity.model.dto.identity.IdentityMasterDTO;
 import com.problemfighter.pfspring.identity.model.entity.Identity;
@@ -24,21 +24,21 @@ import org.springframework.stereotype.Service;
 public class IdentityService implements RequestResponse {
 
     private final IdentityRepository identityRepository;
-    private final IIdentityCallbackService iIdentityCallbackService;
     private final JwtService jwtService;
+    private final IdentityCallbackInterface identityCallbackInterface;
 
     @Autowired
-    public IdentityService(IdentityRepository identityRepository, IIdentityCallbackService iIdentityCallbackService, JwtService jwtService) {
+    public IdentityService(IdentityRepository identityRepository, JwtService jwtService, IdentityCallbackInterface identityCallbackInterface) {
         this.identityRepository = identityRepository;
-        this.iIdentityCallbackService = iIdentityCallbackService;
         this.jwtService = jwtService;
+        this.identityCallbackInterface = identityCallbackInterface;
     }
 
     public Identity getActiveIdentityByIdentifier(String identifier) {
         return identityRepository.getActiveIdentityByIdentifier(identifier);
     }
 
-    public DetailsResponse<IAuthResponse> renew(RequestData<RenewDTO> data) {
+    public DetailsResponse<AuthResponseInterface> renew(RequestData<RenewDTO> data) {
         RenewDTO renewDTO = data.getData();
         try {
             if (renewDTO != null && requestProcessor().dataValidate(renewDTO)) {
@@ -58,10 +58,10 @@ public class IdentityService implements RequestResponse {
     }
 
 
-    public DetailsResponse<IAuthResponse> successAuthResponse(Identity identity) {
+    public DetailsResponse<AuthResponseInterface> successAuthResponse(Identity identity) {
         jwtService.setIssuer(identity.uuid);
-        IAuthResponse iAuthResponse = iIdentityCallbackService.beforeAuthResponse(jwtService, identity);
-        DetailsResponse<IAuthResponse> response = new DetailsResponse<>();
+        AuthResponseInterface iAuthResponse = identityCallbackInterface.beforeAuthResponse(jwtService, identity);
+        DetailsResponse<AuthResponseInterface> response = new DetailsResponse<>();
         if (iAuthResponse == null) {
             iAuthResponse = new AuthResponse().setToken(jwtService.getAccessToken(), jwtService.getRefreshToken());
         }

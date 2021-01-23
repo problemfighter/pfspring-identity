@@ -1,6 +1,6 @@
 package com.problemfighter.pfspring.identity.model.dto;
 
-public interface IAuthResponse {
+public interface AuthResponseInterface {
     public TokenDTO getLogin();
     public void setLogin(TokenDTO tokenDTO);
 }
