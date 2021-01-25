@@ -18,9 +18,8 @@ public class Identity extends EntityCommon {
 
     public String mobile;
 
-    public String recoverToken;
+    public String name;
 
-    @ManyToMany(mappedBy = "identities")
-    public Set<Organization> organizations = new HashSet<>();
+    public String recoverToken;
 
 }
