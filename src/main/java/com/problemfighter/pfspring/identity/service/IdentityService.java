@@ -38,6 +38,10 @@ public class IdentityService implements RequestResponse {
         return identityRepository.getActiveIdentityByIdentifier(identifier);
     }
 
+    public Identity getIdentityByIdentifier(String identifier) {
+        return identityRepository.getActiveIdentityByIdentifier(identifier);
+    }
+
     public DetailsResponse<AuthResponseInterface> renew(RequestData<RenewDTO> data) {
         RenewDTO renewDTO = data.getData();
         try {
