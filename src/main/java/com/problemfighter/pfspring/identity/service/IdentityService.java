@@ -39,7 +39,14 @@ public class IdentityService implements RequestResponse {
     }
 
     public Identity getIdentityByIdentifier(String identifier) {
-        return identityRepository.getActiveIdentityByIdentifier(identifier);
+        return identityRepository.getIdentityByIdentifier(identifier);
+    }
+
+    public Boolean isIdentityExist(String identifier) {
+        if (getIdentityByIdentifier(identifier) == null) {
+            return false;
+        }
+        return true;
     }
 
     public DetailsResponse<AuthResponseInterface> renew(RequestData<RenewDTO> data) {
