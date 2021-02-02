@@ -38,6 +38,10 @@ public class IdentityService implements RequestResponse {
         return identityRepository.getActiveIdentityByIdentifier(identifier);
     }
 
+    public Identity getActiveIdentityByUuid(String uuid) {
+        return identityRepository.getActiveIdentityByUuid(uuid);
+    }
+
     public Identity getIdentityByIdentifier(String identifier) {
         return identityRepository.getIdentityByIdentifier(identifier);
     }
