@@ -11,14 +11,20 @@ public class IdentityConfig {
 
     public List<String> skipUrls = new ArrayList<>();
 
+
+    public IdentityConfig() {
+        skipUrls.add("/favicon.ico");
+        allowSwagger();
+    }
+
     public List<String> getSkipUrls() {
         return skipUrls;
     }
 
     public void setSkipUrls(List<String> skipUrls) {
-        this.skipUrls = skipUrls;
-        skipUrls.add("/favicon.ico");
-        allowSwagger();
+        if (skipUrls != null && !skipUrls.isEmpty()) {
+            this.skipUrls.addAll(skipUrls);
+        }
     }
 
     private void allowSwagger(){
