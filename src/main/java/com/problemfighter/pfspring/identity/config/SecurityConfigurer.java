@@ -18,11 +18,13 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
     public final IdentityService identityService;
     private final String renewUrl = "/api/v1/auth/renew";
     private final JwtTokenFilterInterface jwtTokenFilter;
+    private final IdentityConfig identityConfig;
 
     @Autowired
-    public SecurityConfigurer(IdentityService identityService, JwtTokenFilterInterface jwtTokenFilter) {
+    public SecurityConfigurer(IdentityService identityService, JwtTokenFilterInterface jwtTokenFilter, IdentityConfig identityConfig) {
         this.identityService = identityService;
         this.jwtTokenFilter = jwtTokenFilter;
+        this.identityConfig = identityConfig;
     }
 
 
@@ -37,6 +39,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .addFilterAfter(jwtTokenFilter, IdentifierPassAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", renewUrl).permitAll()
+                .antMatchers(identityConfig.skipUrls.toArray(new String[0])).permitAll()
                 .anyRequest()
                 .authenticated();
     }

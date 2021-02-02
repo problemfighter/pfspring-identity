@@ -1,0 +1,4 @@
+pf:
+  identity:
+    skipUrls:
+      - '/swagger-ui.html'

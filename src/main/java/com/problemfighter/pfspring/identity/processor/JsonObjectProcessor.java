@@ -1,14 +1,11 @@
 package com.problemfighter.pfspring.identity.processor;
 
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
 import com.problemfighter.pfspring.restapi.common.ApiRestException;
 import com.problemfighter.pfspring.restapi.rr.request.RequestData;
-
 import javax.servlet.ServletInputStream;
 import java.io.IOException;
 
