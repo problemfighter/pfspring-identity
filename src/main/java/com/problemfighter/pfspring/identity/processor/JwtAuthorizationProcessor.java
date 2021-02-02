@@ -1,8 +1,6 @@
 package com.problemfighter.pfspring.identity.processor;
 
 import com.problemfighter.pfspring.common.common.AppCommonUtil;
-import com.problemfighter.pfspring.common.common.AppProcessingException;
-import com.problemfighter.pfspring.identity.common.IdentityUtil;
 import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.entity.Identity;
 import com.problemfighter.pfspring.identity.service.IdentityService;
@@ -10,14 +8,12 @@ import com.problemfighter.pfspring.jwt.config.JwtConfig;
 import com.problemfighter.pfspring.jwt.model.data.JwtValidationResponse;
 import com.problemfighter.pfspring.jwt.service.JwtService;
 import com.problemfighter.pfspring.restapi.common.ApiRestException;
-import com.problemfighter.pfspring.restapi.rr.response.MessageResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 @Component
 public class JwtAuthorizationProcessor {
