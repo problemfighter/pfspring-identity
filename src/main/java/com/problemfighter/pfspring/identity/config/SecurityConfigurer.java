@@ -1,6 +1,7 @@
 package com.problemfighter.pfspring.identity.config;
 
 
+import com.problemfighter.pfspring.identity.common.IdentityConstant;
 import com.problemfighter.pfspring.identity.filter.JwtTokenFilterInterface;
 import com.problemfighter.pfspring.identity.filter.IdentifierPassAuthFilter;
 import com.problemfighter.pfspring.identity.service.IdentityService;
@@ -38,7 +39,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .addFilter(new IdentifierPassAuthFilter(authenticationManager(), identityService))
                 .addFilterAfter(jwtTokenFilter, IdentifierPassAuthFilter.class)
                 .authorizeRequests()
-                .antMatchers("/", renewUrl).permitAll()
+                .antMatchers("/", IdentityConstant.TOKEN_RENEW_URL).permitAll()
                 .antMatchers(identityConfig.skipUrls.toArray(new String[0])).permitAll()
                 .anyRequest()
                 .authenticated();
