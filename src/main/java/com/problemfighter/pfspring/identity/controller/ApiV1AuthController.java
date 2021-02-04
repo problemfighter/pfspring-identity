@@ -5,6 +5,7 @@ import com.problemfighter.pfspring.identity.model.dto.AuthResponse;
 import com.problemfighter.pfspring.identity.model.dto.AuthResponseInterface;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
 import com.problemfighter.pfspring.identity.model.dto.RenewDTO;
+import com.problemfighter.pfspring.identity.service.AuthService;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import com.problemfighter.pfspring.restapi.rr.RequestResponse;
 import com.problemfighter.pfspring.restapi.rr.request.RequestData;
@@ -18,16 +19,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class ApiV1AuthController implements RequestResponse {
 
-    private final IdentityService identityService;
+    private final AuthService authService;
 
     @Autowired
-    public ApiV1AuthController(IdentityService identityService) {
-        this.identityService = identityService;
+    public ApiV1AuthController(AuthService authService) {
+        this.authService = authService;
     }
 
     @RequestMapping(value = IdentityConstant.TOKEN_RENEW_URL, method = RequestMethod.POST)
     public DetailsResponse<AuthResponseInterface> renew(@RequestBody RequestData<RenewDTO> data) {
-        return identityService.renew(data);
+        return authService.renew(data);
     }
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)

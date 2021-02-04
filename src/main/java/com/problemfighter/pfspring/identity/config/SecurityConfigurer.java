@@ -4,6 +4,7 @@ package com.problemfighter.pfspring.identity.config;
 import com.problemfighter.pfspring.identity.common.IdentityConstant;
 import com.problemfighter.pfspring.identity.filter.JwtTokenFilterInterface;
 import com.problemfighter.pfspring.identity.filter.IdentifierPassAuthFilter;
+import com.problemfighter.pfspring.identity.service.AuthService;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -16,16 +17,15 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 @EnableWebSecurity
 public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
 
-    public final IdentityService identityService;
-    private final String renewUrl = "/api/v1/auth/renew";
     private final JwtTokenFilterInterface jwtTokenFilter;
     private final IdentityConfig identityConfig;
+    private final AuthService authService;
 
     @Autowired
-    public SecurityConfigurer(IdentityService identityService, JwtTokenFilterInterface jwtTokenFilter, IdentityConfig identityConfig) {
-        this.identityService = identityService;
+    public SecurityConfigurer(JwtTokenFilterInterface jwtTokenFilter, IdentityConfig identityConfig, AuthService authService) {
         this.jwtTokenFilter = jwtTokenFilter;
         this.identityConfig = identityConfig;
+        this.authService = authService;
     }
 
 
@@ -36,7 +36,7 @@ public class SecurityConfigurer extends WebSecurityConfigurerAdapter {
                 .sessionManagement()
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
-                .addFilter(new IdentifierPassAuthFilter(authenticationManager(), identityService))
+                .addFilter(new IdentifierPassAuthFilter(authenticationManager(), authService))
                 .addFilterAfter(jwtTokenFilter, IdentifierPassAuthFilter.class)
                 .authorizeRequests()
                 .antMatchers("/", IdentityConstant.TOKEN_RENEW_URL).permitAll()

@@ -6,6 +6,7 @@ import com.problemfighter.pfspring.identity.config.IdentityMessages;
 import com.problemfighter.pfspring.identity.model.dto.LoginDTO;
 import com.problemfighter.pfspring.identity.model.entity.Identity;
 import com.problemfighter.pfspring.identity.processor.JsonObjectProcessor;
+import com.problemfighter.pfspring.identity.service.AuthService;
 import com.problemfighter.pfspring.identity.service.IdentityService;
 import com.problemfighter.pfspring.restapi.common.ApiRestException;
 import com.problemfighter.pfspring.restapi.rr.RequestResponse;
@@ -24,12 +25,12 @@ import java.io.IOException;
 public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilter implements RequestResponse {
 
     private final AuthenticationManager authenticationManager;
-    private final IdentityService identityService;
+    private final AuthService authService;
     private Identity identity;
 
-    public IdentifierPassAuthFilter(AuthenticationManager authenticationManager, IdentityService identityService) {
+    public IdentifierPassAuthFilter(AuthenticationManager authenticationManager, AuthService authService) {
         this.authenticationManager = authenticationManager;
-        this.identityService = identityService;
+        this.authService = authService;
     }
 
     @Override
@@ -40,7 +41,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
                 throw new ApiRestException().errorException(IdentityMessages.UNABLE_TO_PARSE);
             }
             requestProcessor().dataValidate(loginData);
-            identity = identityService.getActiveIdentityByIdentifier(loginData.identifier);
+            identity = authService.getActiveIdentityByIdentifier(loginData.identifier);
             if (identity == null) {
                 throw new ApiRestException().errorException(IdentityMessages.INVALID_IDENTIFIER_OR_PASS);
             }
@@ -62,7 +63,7 @@ public class IdentifierPassAuthFilter extends UsernamePasswordAuthenticationFilt
 
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authResult) throws IOException, ServletException {
-        IdentityUtil.makeJsonResponse(response, identityService.successAuthResponse(identity));
+        IdentityUtil.makeJsonResponse(response, authService.successAuthResponse(identity));
     }
 
     @Override
